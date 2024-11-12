@@ -1,6 +1,47 @@
+'use client'
+
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getSession } from "next-auth/react";
 
 export default function Login() {
+
+  const [email , setEmail] = useState("")
+  const [password , setPassword] = useState("")
+  const router = useRouter()
+
+  useEffect(() => {
+    async function fetchSession() {
+      const session = await getSession();
+      console.log(session);
+    }
+    fetchSession()
+  } ,[])
+
+  const handleSignIn = async() => {
+    try {
+        const res = await signIn('credentials' , {
+          email ,
+          password ,
+          redirect : false
+        })
+
+        if(res?.status === 200) {
+          console.log(res);
+          router.push('/dashboard')
+        }
+    } catch(err : any) {
+      if (err.response && err.response.data && err.response.data.message) {
+        console.error(err.response.data.message);
+      } else {
+        console.error("Something went wrong. Please try again.");
+      }
+    }
+    
+  }
+
  return (
 <div className="bg-no-repeat bg-cover bg-center relative">
   <div className="absolute"/>
@@ -18,8 +59,10 @@ export default function Login() {
             </label>
             <input
               className=" w-full text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-black"
-              type=""
+              type="text"
               placeholder="mail@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -28,8 +71,10 @@ export default function Login() {
             </label>
             <input
               className="w-full content-center text-base px-4 py-2 border  border-gray-300 rounded-lg focus:outline-none focus:border-black"
-              type=""
+              type="password"
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="flex items-center justify-between">
@@ -57,6 +102,7 @@ export default function Login() {
             <button 
               type="submit"
               className="w-full flex justify-center hover:bg-black hover:text-white text-black p-3 rounded-full tracking-wide font-semibold cursor-pointer border-2 border-black"
+              onClick={() => handleSignIn()}
             >
               Sign in
             </button>
