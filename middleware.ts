@@ -4,14 +4,15 @@ import { getToken } from "next-auth/jwt";
 
 export async function middleware(request : NextRequest) {
 
-    const token = await getToken({req : request})
+    const token = await getToken({req : request , secret : process.env.AUTH_SECRET})
     const url = request.nextUrl
+
+    console.log('token'  , token)
 
     if(token && 
         (
             url.pathname.startsWith('/login') ||
-            url.pathname.startsWith('/register') ||
-            url.pathname.startsWith('/')
+            url.pathname.startsWith('/register')
         )
     ) {
         return NextResponse.redirect(new URL('/dashboard' , request.url))
@@ -27,5 +28,5 @@ export async function middleware(request : NextRequest) {
 
 
 export const config = {
-    matcher : ['/login' , '/register' , '/dashboard']
+    matcher : ['/login'  , '/dashboard' , '/((?!api|_next|.*\\..*).*)']
 }

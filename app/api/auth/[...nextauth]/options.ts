@@ -7,7 +7,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 
 
 export const authOptions : NextAuthOptions = {
-    // adapter: PrismaAdapter(client),
     providers : [
         CredentialsProvider({
             id : "credentials",
@@ -43,14 +42,15 @@ export const authOptions : NextAuthOptions = {
         })
     ] ,
     callbacks : {
-        async jwt ({token , user } : {token : any , user : any}) {
+        async jwt ({token , user }) {
 
             if(user) {
+                console.log('user found setting token')
                 token._id = user.id?.toString(),
                 token.email = user.email,
                 token.name = user.name 
             }
-
+            console.log('token created' , token)
             return token
         } ,
         async session ({session , token} : {token : any , session : any}) {
@@ -68,5 +68,6 @@ export const authOptions : NextAuthOptions = {
     session : {
         strategy : "jwt"
     },
+    // adapter : PrismaAdapter(client),
     secret : process.env.AUTH_SECRET
 }

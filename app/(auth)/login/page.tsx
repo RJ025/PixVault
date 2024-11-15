@@ -12,25 +12,25 @@ export default function Login() {
   const [password , setPassword] = useState("")
   const router = useRouter()
 
-  useEffect(() => {
-    async function fetchSession() {
-      const session = await getSession();
-      console.log(session);
-    }
-    fetchSession()
-  } ,[])
+  // useEffect(() => {
+  //   async function fetchSession() {
+  //     const session = await getSession();
+  //     console.log(session);
+  //   }
+  //   fetchSession()
+  // } ,[])
 
   const handleSignIn = async() => {
     try {
         const res = await signIn('credentials' , {
           email ,
           password ,
-          redirect : false
+          redirect : true,
         })
 
         if(res?.status === 200) {
           console.log(res);
-          router.push('/dashboard')
+          // router.push('/dashboard')
         }
     } catch(err : any) {
       if (err.response && err.response.data && err.response.data.message) {
